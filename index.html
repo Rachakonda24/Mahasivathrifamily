@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahashivratri Celebration</title>
+
+<style>
+body{
+    margin:0;
+    background:black;
+    overflow:hidden;
+    font-family:Georgia, serif;
+}
+
+/* ================= START SCREEN ================= */
+
+#startScreen{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:radial-gradient(circle at center, #111 0%, #000 70%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+}
+
+#startScreen img{
+    width:350px;
+    max-width:85%;
+    animation:float 6s ease-in-out infinite alternate;
+    filter:drop-shadow(0 0 30px cyan);
+}
+
+@keyframes float{
+    from{ transform:scale(1); }
+    to{ transform:scale(1.08); }
+}
+
+#startBtn{
+    margin-top:40px;
+    padding:16px 45px;
+    font-size:22px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    background:linear-gradient(45deg, orange, gold);
+    color:black;
+    font-weight:bold;
+    box-shadow:0 0 25px gold;
+    transition:0.3s;
+}
+
+#startBtn:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 40px orange;
+}
+
+/* ================= SLIDESHOW ================= */
+
+#slideshow{
+    position:fixed;
+    width:100%;
+    height:100%;
+}
+
+.slide{
+    position:absolute;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0;
+    transform:scale(1);
+    transition:opacity 2s ease-in-out, transform 8s ease-in-out;
+}
+
+.active{
+    opacity:1;
+    transform:scale(1.1);
+}
+
+/* ================= CAPTION ================= */
+
+.caption{
+    position:absolute;
+    bottom:60px;
+    width:100%;
+    text-align:center;
+    font-size:28px;
+    color:white;
+    text-shadow:0 0 15px orange;
+    opacity:0;
+    transition:opacity 2s;
+}
+
+.caption.show{
+    opacity:1;
+}
+
+/* ================= SPARKLES ================= */
+
+.sparkle{
+    position:absolute;
+    width:3px;
+    height:3px;
+    background:white;
+    border-radius:50%;
+    animation:spark 6s linear infinite;
+}
+
+@keyframes spark{
+    0%{ transform:translateY(0); opacity:1;}
+    100%{ transform:translateY(-100vh); opacity:0;}
+}
+
+/* ================= END FADE ================= */
+
+#fadeBlack{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    opacity:0;
+    transition:opacity 4s;
+    z-index:50;
+}
+
+#endTitle{
+    position:fixed;
+    width:100%;
+    text-align:center;
+    top:45%;
+    font-size:48px;
+    color:white;
+    opacity:0;
+    z-index:60;
+    letter-spacing:5px;
+    transition:opacity 4s;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen">
+    <img src="shiva.png" alt="Lord Shiva">
+    <button id="startBtn">🕉️ START CELEBRATION 🕉️</button>
+</div>
+
+<!-- SLIDESHOW -->
+<div id="slideshow">
+    <img src="Dad-mom.png" class="slide">
+    <img src="dad-Rishban.png" class="slide">
+    <img src="prasad.png" class="slide">
+    <img src="Rchenchu.png" class="slide">
+    <img src="Rishban.png" class="slide">
+    <img src="Somasekhar.png" class="slide">
+</div>
+
+<div class="caption" id="captionText"></div>
+<div id="fadeBlack"></div>
+<div id="endTitle">🕉️ HAPPY MAHASHIVRATRI 🕉️<br>THE END</div>
+
+<audio id="bgMusic" preload="auto">
+    <source src="love-music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+const slides=document.querySelectorAll(".slide");
+const caption=document.getElementById("captionText");
+const fadeBlack=document.getElementById("fadeBlack");
+const endTitle=document.getElementById("endTitle");
+const music=document.getElementById("bgMusic");
+const startBtn=document.getElementById("startBtn");
+const startScreen=document.getElementById("startScreen");
+
+const names=[
+"Dad & Mom",
+"Dad & Rishban",
+"Prasad",
+"R. Chenchu Prasad",
+"Rishban",
+"Somashekhar"
+];
+
+let current=0;
+const duration=7000;
+let slideInterval;
+
+function showSlide(index){
+    slides.forEach(s=>s.classList.remove("active"));
+    slides[index].classList.add("active");
+
+    caption.textContent=names[index];
+    caption.classList.add("show");
+
+    setTimeout(()=>{
+        caption.classList.remove("show");
+    },5000);
+}
+
+function nextSlide(){
+    if(current<slides.length-1){
+        current++;
+        showSlide(current);
+    }else{
+        endShow();
+    }
+}
+
+function endShow(){
+    clearInterval(slideInterval);
+    fadeBlack.style.opacity="1";
+
+    setTimeout(()=>{
+        endTitle.style.opacity="1";
+        music.pause();
+    },4000);
+}
+
+/* START BUTTON */
+
+startBtn.addEventListener("click",function(){
+
+    startScreen.style.display="none";
+
+    music.volume=0.7;
+    music.play().catch(err=>{
+        console.log("Autoplay blocked:",err);
+    });
+
+    showSlide(current);
+    slideInterval=setInterval(nextSlide,duration);
+});
+
+/* SPARKLE GENERATION */
+
+for(let i=0;i<40;i++){
+    let sp=document.createElement("div");
+    sp.className="sparkle";
+    sp.style.left=Math.random()*100+"vw";
+    sp.style.top=Math.random()*100+"vh";
+    sp.style.animationDuration=(4+Math.random()*4)+"s";
+    document.body.appendChild(sp);
+}
+
+</script>
+
+</body>
+</html>
